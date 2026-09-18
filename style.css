@@ -1,0 +1,49 @@
+body {
+    font-family: Arial, sans-serif;
+    background: lightgray;
+    margin: 0;
+    padding: 40px;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+h1 {
+    text-align: center;
+}
+
+input,
+select,
+button {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    box-sizing: border-box;
+}
+
+button {
+    background: green;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+li {
+    list-style: none;
+    background: lightgray;
+    margin: 8px 0;
+    padding: 10px;
+}
+
+.delete-button {
+    float: right;
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px;
+}
