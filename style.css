@@ -1,5 +1,5 @@
 
-/* General page design */
+/* GENERAL PAGE DESIGN */
 body {
     font-family: Arial, sans-serif;
     background: lightgray;
@@ -8,7 +8,7 @@ body {
     color: black;
 }
 
-/* Main expense tracker container */
+/* MAIN CONTAINER */
 .container {
     max-width: 500px;
     margin: auto;
@@ -18,27 +18,44 @@ body {
     box-shadow: 0 4px 12px gray;
 }
 
-/* Main heading */
+/* MAIN HEADING */
 h1 {
     text-align: center;
     margin-bottom: 8px;
 }
 
-/* Short description below the heading */
 .subtitle {
     text-align: center;
     color: dimgray;
     margin-bottom: 25px;
 }
 
-/* Form labels */
+/* SECTION PANELS */
+.budget-section,
+.expense-form {
+    padding: 18px;
+    margin: 20px 0;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+}
+
+.budget-section {
+    background: honeydew;
+}
+
+.budget-section h2,
+.expense-form h2 {
+    margin-top: 0;
+}
+
+/* FORM LABELS */
 label {
     display: block;
     margin-top: 12px;
     font-weight: bold;
 }
 
-/* Text fields and category dropdown */
+/* INPUT FIELDS AND DROPDOWN */
 input,
 select {
     display: block;
@@ -51,7 +68,7 @@ select {
     font-size: 15px;
 }
 
-/* Buttons */
+/* GENERAL BUTTON DESIGN */
 button {
     width: 100%;
     padding: 11px;
@@ -64,32 +81,90 @@ button {
     font-size: 15px;
 }
 
-/* Change the button color when the mouse is over it */
 button:hover {
     background: darkgreen;
 }
 
-/* Total amount section */
-h2 {
+/* BUDGET SUMMARY */
+.budget-summary {
+    margin-top: 18px;
+}
+
+.budget-summary p {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+
+.budget-summary strong {
+    overflow-wrap: anywhere;
+}
+
+/* PROGRESS BAR BACKGROUND */
+.progress-track {
+    width: 100%;
+    height: 18px;
+    margin-top: 16px;
+    background: lightgray;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* PROGRESS BAR FILL */
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    background: green;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+/* MESSAGE BELOW THE PROGRESS BAR */
+#budgetMessage {
+    margin-bottom: 0;
+    color: darkgreen;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+/* WARNING WHEN CLOSE TO OR OVER BUDGET */
+#budgetMessage.warning {
+    color: darkorange;
+}
+
+#budgetMessage.over-budget {
+    color: red;
+}
+
+.progress-fill.warning {
+    background: darkorange;
+}
+
+.progress-fill.over-budget {
+    background: red;
+}
+
+/* TOTAL OF ALL RECORDED EXPENSES */
+.all-time-total {
     margin-top: 25px;
     padding: 15px;
-    background: honeydew;
+    background: whitesmoke;
     border-radius: 5px;
     color: darkgreen;
     overflow-wrap: anywhere;
 }
 
-/* Expense history heading */
+/* EXPENSE HISTORY */
 h3 {
     margin-top: 25px;
 }
 
-/* Expense list */
 #expenseList {
     padding: 0;
 }
 
-/* Each expense entry */
 #expenseList li {
     display: flex;
     align-items: center;
@@ -103,7 +178,7 @@ h3 {
     padding: 12px;
 }
 
-/* Name, category, date, and amount */
+/* EXPENSE DETAILS */
 .expense-details {
     display: flex;
     flex-direction: column;
@@ -122,7 +197,7 @@ h3 {
     color: darkgreen;
 }
 
-/* Delete button inside an expense entry */
+/* DELETE BUTTON */
 .delete-button {
     width: auto;
     flex-shrink: 0;
@@ -136,7 +211,7 @@ h3 {
     background: darkred;
 }
 
-/* Adjust the layout for phones */
+/* RESPONSIVE DESIGN FOR SMALL SCREENS */
 @media (max-width: 480px) {
     body {
         padding: 15px 10px;

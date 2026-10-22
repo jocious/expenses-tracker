@@ -13,28 +13,82 @@
         <h1>Personal Expense Tracker</h1>
         <p class="subtitle">Keep track of your daily expenses.</p>
 
-        <label for="expenseName">Expense Name</label>
-        <input type="text" id="expenseName" placeholder="e.g. Lunch">
+        <!-- MONTHLY BUDGET SECTION -->
+        <section class="budget-section">
+            <h2>Monthly Budget</h2>
 
-        <label for="expenseAmount">Amount (₱)</label>
-        <input type="number" id="expenseAmount" placeholder="e.g. 150"
-               min="0.01" step="0.01">
+            <label for="budgetAmount">Set Your Budget (₱)</label>
+            <input
+                type="number"
+                id="budgetAmount"
+                placeholder="e.g. 5000"
+                min="0.01"
+                step="0.01"
+            >
 
-        <label for="expenseCategory">Category</label>
-        <select id="expenseCategory">
-            <option value="Food">Food</option>
-            <option value="Transport">Transport</option>
-            <option value="School">School</option>
-            <option value="Other">Other</option>
-        </select>
+            <button type="button" id="saveBudgetButton">
+                Save Budget
+            </button>
 
-        <label for="expenseDate">Expense Date</label>
-        <input type="date" id="expenseDate">
+            <div class="budget-summary">
+                <p>Monthly Budget: <strong id="budgetTotal">₱0.00</strong></p>
+                <p>Spent This Month: <strong id="monthlySpent">₱0.00</strong></p>
+                <p>Remaining Budget: <strong id="remainingBudget">₱0.00</strong></p>
+            </div>
 
-        <button type="button" onclick="addExpense()">Add Expense</button>
+            <div
+                class="progress-track"
+                role="progressbar"
+                aria-label="Monthly budget used"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+                id="budgetProgress"
+            >
+                <div class="progress-fill" id="budgetProgressFill"></div>
+            </div>
 
-        <h2>Total Spent: <span id="total">₱0.00</span></h2>
+            <p id="budgetMessage" aria-live="polite">
+                Set a budget to track your monthly spending.
+            </p>
+        </section>
 
+        <!-- ADD EXPENSE SECTION -->
+        <section class="expense-form">
+            <h2>Add an Expense</h2>
+
+            <label for="expenseName">Expense Name</label>
+            <input type="text" id="expenseName" placeholder="e.g. Lunch">
+
+            <label for="expenseAmount">Amount (₱)</label>
+            <input
+                type="number"
+                id="expenseAmount"
+                placeholder="e.g. 150"
+                min="0.01"
+                step="0.01"
+            >
+
+            <label for="expenseCategory">Category</label>
+            <select id="expenseCategory">
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="School">School</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="expenseDate">Expense Date</label>
+            <input type="date" id="expenseDate">
+
+            <button type="button" id="addExpenseButton">Add Expense</button>
+        </section>
+
+        <!-- TOTAL OF ALL RECORDED EXPENSES -->
+        <h2 class="all-time-total">
+            Total of All Expenses: <span id="total">₱0.00</span>
+        </h2>
+
+        <!-- EXPENSE HISTORY -->
         <h3>Expense History</h3>
         <ul id="expenseList"></ul>
     </div>
