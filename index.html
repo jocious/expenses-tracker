@@ -18,17 +18,10 @@
             <h2>Monthly Budget</h2>
 
             <label for="budgetAmount">Set Your Budget (₱)</label>
-            <input
-                type="number"
-                id="budgetAmount"
-                placeholder="e.g. 5000"
-                min="0.01"
-                step="0.01"
-            >
+            <input type="number" id="budgetAmount"
+                   placeholder="e.g. 5000" min="0.01" step="0.01">
 
-            <button type="button" id="saveBudgetButton">
-                Save Budget
-            </button>
+            <button type="button" id="saveBudgetButton">Save Budget</button>
 
             <div class="budget-summary">
                 <p>Monthly Budget: <strong id="budgetTotal">₱0.00</strong></p>
@@ -36,15 +29,13 @@
                 <p>Remaining Budget: <strong id="remainingBudget">₱0.00</strong></p>
             </div>
 
-            <div
-                class="progress-track"
-                role="progressbar"
-                aria-label="Monthly budget used"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                aria-valuenow="0"
-                id="budgetProgress"
-            >
+            <div class="progress-track"
+                 role="progressbar"
+                 aria-label="Monthly budget used"
+                 aria-valuemin="0"
+                 aria-valuemax="100"
+                 aria-valuenow="0"
+                 id="budgetProgress">
                 <div class="progress-fill" id="budgetProgressFill"></div>
             </div>
 
@@ -61,13 +52,8 @@
             <input type="text" id="expenseName" placeholder="e.g. Lunch">
 
             <label for="expenseAmount">Amount (₱)</label>
-            <input
-                type="number"
-                id="expenseAmount"
-                placeholder="e.g. 150"
-                min="0.01"
-                step="0.01"
-            >
+            <input type="number" id="expenseAmount"
+                   placeholder="e.g. 150" min="0.01" step="0.01">
 
             <label for="expenseCategory">Category</label>
             <select id="expenseCategory">
@@ -88,7 +74,29 @@
             Total of All Expenses: <span id="total">₱0.00</span>
         </h2>
 
-        <!-- EXPENSE HISTORY -->
+        <!-- SEARCH AND FILTER SECTION -->
+        <section class="search-section">
+            <h2>Find Expenses</h2>
+
+            <label for="searchExpense">Search by Expense Name</label>
+            <input type="search" id="searchExpense"
+                   placeholder="Type a name, e.g. lunch">
+
+            <label for="filterCategory">Filter by Category</label>
+            <select id="filterCategory">
+                <option value="All">All Categories</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="School">School</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <p id="resultCount" aria-live="polite">Showing all expenses</p>
+            <button type="button" id="resetFiltersButton"
+                    class="reset-button">Reset Search and Filter</button>
+        </section>
+
+        <!-- FILTERED EXPENSE HISTORY -->
         <h3>Expense History</h3>
         <ul id="expenseList"></ul>
     </div>
