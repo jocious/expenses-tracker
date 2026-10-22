@@ -1,20 +1,26 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Expense Tracker</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Expense Tracker</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
     <div class="container">
-
         <h1>Personal Expense Tracker</h1>
+        <p class="subtitle">Keep track of your daily expenses.</p>
 
-        <input type="text" id="expenseName" placeholder="Expense name">
+        <label for="expenseName">Expense Name</label>
+        <input type="text" id="expenseName" placeholder="e.g. Lunch">
 
-        <input type="number" id="expenseAmount" placeholder="Amount">
+        <label for="expenseAmount">Amount (₱)</label>
+        <input type="number" id="expenseAmount" placeholder="e.g. 150"
+               min="0.01" step="0.01">
 
+        <label for="expenseCategory">Category</label>
         <select id="expenseCategory">
             <option value="Food">Food</option>
             <option value="Transport">Transport</option>
@@ -22,15 +28,17 @@
             <option value="Other">Other</option>
         </select>
 
-        <button onclick="addExpense()">Add Expense</button>
+        <label for="expenseDate">Expense Date</label>
+        <input type="date" id="expenseDate">
 
-        <h2>Total: ₱<span id="total">0</span></h2>
+        <button type="button" onclick="addExpense()">Add Expense</button>
 
+        <h2>Total Spent: <span id="total">₱0.00</span></h2>
+
+        <h3>Expense History</h3>
         <ul id="expenseList"></ul>
-
     </div>
 
     <script src="script.js"></script>
-
 </body>
 </html>

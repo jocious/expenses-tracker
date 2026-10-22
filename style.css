@@ -1,49 +1,156 @@
+
+/* General page design */
 body {
     font-family: Arial, sans-serif;
     background: lightgray;
     margin: 0;
-    padding: 40px;
+    padding: 40px 20px;
+    color: black;
 }
 
+/* Main expense tracker container */
 .container {
     max-width: 500px;
     margin: auto;
     background: white;
     padding: 25px;
     border-radius: 10px;
+    box-shadow: 0 4px 12px gray;
 }
 
+/* Main heading */
 h1 {
     text-align: center;
+    margin-bottom: 8px;
 }
 
+/* Short description below the heading */
+.subtitle {
+    text-align: center;
+    color: dimgray;
+    margin-bottom: 25px;
+}
+
+/* Form labels */
+label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+}
+
+/* Text fields and category dropdown */
 input,
-select,
-button {
+select {
+    display: block;
     width: 100%;
     padding: 10px;
-    margin: 6px 0;
+    margin-top: 6px;
     box-sizing: border-box;
+    border: 1px solid darkgray;
+    border-radius: 5px;
+    font-size: 15px;
 }
 
+/* Buttons */
 button {
+    width: 100%;
+    padding: 11px;
+    margin-top: 15px;
     background: green;
     color: white;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
+    font-size: 15px;
 }
 
-li {
+/* Change the button color when the mouse is over it */
+button:hover {
+    background: darkgreen;
+}
+
+/* Total amount section */
+h2 {
+    margin-top: 25px;
+    padding: 15px;
+    background: honeydew;
+    border-radius: 5px;
+    color: darkgreen;
+    overflow-wrap: anywhere;
+}
+
+/* Expense history heading */
+h3 {
+    margin-top: 25px;
+}
+
+/* Expense list */
+#expenseList {
+    padding: 0;
+}
+
+/* Each expense entry */
+#expenseList li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     list-style: none;
-    background: lightgray;
-    margin: 8px 0;
-    padding: 10px;
+    background: whitesmoke;
+    border: 1px solid lightgray;
+    border-radius: 6px;
+    margin: 10px 0;
+    padding: 12px;
 }
 
+/* Name, category, date, and amount */
+.expense-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.expense-info {
+    color: dimgray;
+    font-size: 13px;
+}
+
+.expense-amount {
+    font-weight: bold;
+    color: darkgreen;
+}
+
+/* Delete button inside an expense entry */
 .delete-button {
-    float: right;
+    width: auto;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 8px 10px;
     background: red;
-    color: white;
-    border: none;
-    padding: 5px;
+    font-size: 13px;
+}
+
+.delete-button:hover {
+    background: darkred;
+}
+
+/* Adjust the layout for phones */
+@media (max-width: 480px) {
+    body {
+        padding: 15px 10px;
+    }
+
+    .container {
+        padding: 18px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    #expenseList li {
+        align-items: flex-start;
+    }
 }
