@@ -1,300 +1,592 @@
 
-/* GENERAL PAGE DESIGN */
+/* =========================================================
+   GENERAL PAGE STYLING
+   ========================================================= */
+
+/* Makes element widths include their padding and borders. */
+* {
+    box-sizing: border-box;
+}
+
+/* Sets the overall page appearance. */
 body {
-    font-family: Arial, sans-serif;
-    background: lightgray;
     margin: 0;
-    padding: 40px 20px;
-    color: black;
+    font-family: Arial, sans-serif;
+    background-color: whitesmoke;
+    color: darkslategray;
+    line-height: 1.5;
 }
 
-/* MAIN CONTAINER */
-.container {
-    max-width: 500px;
-    margin: auto;
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px gray;
+/* Keeps the application centered and prevents it from becoming too wide. */
+.app-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 24px;
 }
 
-/* HEADINGS */
-h1 {
-    text-align: center;
-    margin-bottom: 8px;
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.page-header {
+    margin-bottom: 30px;
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+    color: teal;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.page-header h1 {
+    margin: 0;
+    color: darkslategray;
+    font-size: 32px;
+    line-height: 1.2;
 }
 
 .subtitle {
-    text-align: center;
+    margin: 10px 0 0;
     color: dimgray;
-    margin-bottom: 25px;
 }
 
-/* SECTION PANELS */
-.budget-section,
-.expense-form,
-.search-section {
-    padding: 18px;
-    margin: 20px 0;
-    border: 1px solid lightgray;
-    border-radius: 8px;
+/* =========================================================
+   SECTION HEADINGS
+   ========================================================= */
+
+.dashboard-section,
+.panel {
+    margin-bottom: 24px;
 }
 
-.budget-section {
-    background: honeydew;
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
 }
 
-.search-section {
-    background: whitesmoke;
+.section-heading h2 {
+    margin: 0;
+    color: darkslategray;
+    font-size: 21px;
 }
 
-.budget-section h2,
-.expense-form h2,
-.search-section h2 {
-    margin-top: 0;
+.section-description {
+    margin: 5px 0 0;
+    color: dimgray;
+    font-size: 14px;
 }
 
-/* FORM LABELS */
-label {
-    display: block;
-    margin-top: 12px;
+/* =========================================================
+   DASHBOARD SUMMARY CARDS
+   ========================================================= */
+
+/* Uses a responsive grid for the three main summary cards. */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.summary-card {
+    min-width: 0;
+    padding: 22px;
+    background-color: white;
+    border: 1px solid gainsboro;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px lightgray;
+}
+
+/* Adds a colored top border to distinguish the summary cards. */
+.total-card {
+    border-top: 4px solid royalblue;
+}
+
+.monthly-card {
+    border-top: 4px solid teal;
+}
+
+.remaining-card {
+    border-top: 4px solid seagreen;
+}
+
+.summary-label {
+    margin: 0;
+    color: dimgray;
+    font-size: 14px;
     font-weight: bold;
 }
 
-/* INPUT FIELDS AND DROPDOWNS */
-input,
-select {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-top: 6px;
-    box-sizing: border-box;
-    border: 1px solid darkgray;
-    border-radius: 5px;
-    font-size: 15px;
+.summary-value {
+    overflow-wrap: anywhere;
+    margin: 12px 0 8px;
+    color: darkslategray;
+    font-size: 28px;
+    font-weight: bold;
 }
 
-/* GENERAL BUTTONS */
-button {
+.summary-note {
+    margin: 0;
+    color: dimgray;
+    font-size: 12px;
+}
+
+/* Changes the remaining-budget card when the budget is exceeded. */
+.remaining-card.over-budget {
+    border-top-color: firebrick;
+}
+
+.remaining-card.over-budget .summary-value {
+    color: firebrick;
+}
+
+/* =========================================================
+   GENERAL PANELS
+   ========================================================= */
+
+.panel {
+    padding: 24px;
+    background-color: white;
+    border: 1px solid gainsboro;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px lightgray;
+}
+
+/* =========================================================
+   FORM INPUTS
+   ========================================================= */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 7px;
+}
+
+.form-group label,
+.budget-form label {
+    color: darkslategray;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+input,
+select {
     width: 100%;
-    padding: 11px;
-    margin-top: 15px;
-    background: green;
-    color: white;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid silver;
+    border-radius: 7px;
+    background-color: white;
+    color: darkslategray;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+/* Highlights the field currently being used. */
+input:focus,
+select:focus {
+    outline: 2px solid lightseagreen;
+    outline-offset: 1px;
+    border-color: teal;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+button {
+    min-height: 42px;
+    padding: 10px 16px;
     border: none;
-    border-radius: 5px;
+    border-radius: 7px;
+    background-color: teal;
+    color: white;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: bold;
     cursor: pointer;
-    font-size: 15px;
+    transition: background-color 0.2s ease;
 }
 
 button:hover {
-    background: darkgreen;
+    background-color: darkslategray;
 }
 
-/* CANCEL EDITING BUTTON */
-.cancel-button {
-    background: dimgray;
+button:focus-visible {
+    outline: 2px solid royalblue;
+    outline-offset: 3px;
 }
 
-.cancel-button:hover {
-    background: black;
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
-/* HIDE ELEMENTS THAT ARE MARKED HIDDEN */
-[hidden] {
-    display: none !important;
-}
-
-/* BUDGET SUMMARY */
-.budget-summary {
-    margin-top: 18px;
-}
-
-.budget-summary p {
+.form-actions {
     display: flex;
-    justify-content: space-between;
-    gap: 12px;
     flex-wrap: wrap;
-    margin: 10px 0;
+    gap: 10px;
+    margin-top: 20px;
 }
 
-.budget-summary strong {
+.secondary-button {
+    background-color: lightgray;
+    color: darkslategray;
+}
+
+.secondary-button:hover {
+    background-color: silver;
+}
+
+/* =========================================================
+   MONTHLY BUDGET
+   ========================================================= */
+
+.budget-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.budget-input-row {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+}
+
+.budget-input-row input {
+    flex: 1;
+}
+
+.budget-input-row button {
+    flex-shrink: 0;
+}
+
+.budget-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 22px;
+}
+
+.budget-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px;
+    background-color: aliceblue;
+    border-radius: 8px;
+}
+
+.budget-detail span {
+    color: dimgray;
+    font-size: 13px;
+}
+
+.budget-detail strong {
     overflow-wrap: anywhere;
+    font-size: 18px;
 }
 
-/* BUDGET PROGRESS BAR */
+/* The background track represents the full budget. */
 .progress-track {
     width: 100%;
-    height: 18px;
-    margin-top: 16px;
-    background: lightgray;
-    border-radius: 10px;
+    height: 14px;
+    margin-top: 20px;
     overflow: hidden;
+    border-radius: 20px;
+    background-color: gainsboro;
 }
 
+/* JavaScript changes this width according to spending. */
 .progress-fill {
-    width: 0%;
+    width: 0;
     height: 100%;
-    background: green;
-    border-radius: 10px;
-    transition: width 0.3s ease;
+    border-radius: 20px;
+    background-color: mediumseagreen;
+    transition: width 0.3s ease, background-color 0.3s ease;
 }
 
-/* BUDGET STATUS MESSAGES */
-#budgetMessage {
-    margin-bottom: 0;
-    color: darkgreen;
-    font-weight: bold;
-    overflow-wrap: anywhere;
-}
-
-#budgetMessage.warning {
-    color: darkorange;
-}
-
-#budgetMessage.over-budget {
-    color: red;
-}
-
-.progress-fill.warning {
-    background: darkorange;
-}
-
-.progress-fill.over-budget {
-    background: red;
-}
-
-/* ALL-TIME TOTAL */
-.all-time-total {
-    margin-top: 25px;
-    padding: 15px;
-    background: whitesmoke;
-    border-radius: 5px;
-    color: darkgreen;
-    overflow-wrap: anywhere;
-}
-
-/* SEARCH RESULTS */
-#resultCount {
+.budget-status {
+    margin: 10px 0 0;
     color: dimgray;
-    font-size: 14px;
-    margin-bottom: 0;
+    font-size: 13px;
 }
 
-.reset-button {
-    background: dimgray;
+/* =========================================================
+   MONTHLY CATEGORY TOTALS
+   ========================================================= */
+
+.category-totals {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
-.reset-button:hover {
-    background: black;
+.category-row {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
 }
 
-/* EXPENSE HISTORY */
-h3 {
-    margin-top: 25px;
-}
-
-#expenseList {
-    padding: 0;
-}
-
-#expenseList li {
+.category-heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    list-style: none;
-    background: whitesmoke;
-    border: 1px solid lightgray;
-    border-radius: 6px;
-    margin: 10px 0;
-    padding: 12px;
 }
 
-/* EXPENSE DETAILS */
-.expense-details {
+.category-name {
+    font-weight: bold;
+}
+
+.category-amount {
+    overflow-wrap: anywhere;
+    color: darkslategray;
+    font-weight: bold;
+}
+
+.category-progress-track {
+    width: 100%;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 20px;
+    background-color: gainsboro;
+}
+
+.category-progress-fill {
+    width: 0;
+    height: 100%;
+    border-radius: 20px;
+    background-color: teal;
+    transition: width 0.3s ease;
+}
+
+.category-empty {
+    color: dimgray;
+    font-size: 14px;
+}
+
+/* =========================================================
+   SEARCH AND CATEGORY FILTERS
+   ========================================================= */
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 14px;
+}
+
+.filter-button-wrapper {
+    display: flex;
+    align-items: end;
+}
+
+.result-count {
+    margin: 20px 0 12px;
+    color: dimgray;
+    font-size: 13px;
+}
+
+/* =========================================================
+   EXPENSE LIST ITEMS
+   ========================================================= */
+
+.expense-list {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    min-width: 0;
-    overflow-wrap: anywhere;
+    gap: 12px;
 }
 
-.expense-info {
+.expense-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid gainsboro;
+    border-radius: 9px;
+    background-color: white;
+}
+
+.expense-information {
+    min-width: 0;
+    flex: 1;
+}
+
+.expense-information h3 {
+    overflow-wrap: anywhere;
+    margin: 0 0 5px;
+    color: darkslategray;
+    font-size: 16px;
+}
+
+.expense-information p {
+    overflow-wrap: anywhere;
+    margin: 3px 0;
     color: dimgray;
     font-size: 13px;
 }
 
 .expense-amount {
+    margin-top: 7px !important;
+    color: teal !important;
+    font-size: 16px !important;
     font-weight: bold;
-    color: darkgreen;
 }
 
-/* EDIT AND DELETE BUTTON GROUP */
 .expense-actions {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    flex-wrap: wrap;
     flex-shrink: 0;
+    gap: 8px;
 }
 
-/* SMALL BUTTONS INSIDE EACH EXPENSE */
-.expense-actions button {
-    width: auto;
-    min-width: 68px;
-    margin: 0;
-    padding: 8px 10px;
-    font-size: 13px;
-}
-
-/* EDIT BUTTON */
 .edit-button {
-    background: royalblue;
+    background-color: royalblue;
 }
 
 .edit-button:hover {
-    background: darkblue;
+    background-color: midnightblue;
 }
 
-/* DELETE BUTTON */
 .delete-button {
-    background: red;
+    background-color: firebrick;
 }
 
 .delete-button:hover {
-    background: darkred;
+    background-color: darkred;
 }
 
-/* EMPTY SEARCH RESULTS MESSAGE */
 .empty-message {
-    display: block !important;
+    padding: 24px 12px;
     color: dimgray;
     text-align: center;
-    padding: 18px;
-    background: whitesmoke;
-    border-radius: 6px;
 }
 
-/* RESPONSIVE DESIGN FOR SMALL SCREENS */
-@media (max-width: 480px) {
-    body {
-        padding: 15px 10px;
+/* Ensures hidden controls stay hidden even when other styles are applied. */
+[hidden] {
+    display: none !important;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.page-footer {
+    padding: 10px 0;
+    color: dimgray;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* =========================================================
+   RESPONSIVE LAYOUT: TABLETS
+   ========================================================= */
+
+@media (max-width: 800px) {
+    .app-container {
+        padding: 24px 18px;
     }
 
-    .container {
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .remaining-card {
+        grid-column: 1 / -1;
+    }
+
+    .filter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filter-button-wrapper {
+        grid-column: 1 / -1;
+    }
+
+    .filter-button-wrapper button {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE LAYOUT: MOBILE PHONES
+   ========================================================= */
+
+@media (max-width: 520px) {
+    .app-container {
+        padding: 18px 12px;
+    }
+
+    .page-header h1 {
+        font-size: 26px;
+    }
+
+    .summary-grid,
+    .form-grid,
+    .budget-details,
+    .filter-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .remaining-card,
+    .filter-button-wrapper {
+        grid-column: auto;
+    }
+
+    .summary-card {
         padding: 18px;
     }
 
-    h1 {
-        font-size: 24px;
+    .summary-value {
+        font-size: 25px;
     }
 
-    #expenseList li {
-        align-items: flex-start;
+    .panel {
+        padding: 18px 14px;
+    }
+
+    .section-heading h2 {
+        font-size: 19px;
+    }
+
+    .budget-input-row {
+        flex-direction: column;
+    }
+
+    .budget-input-row button {
+        width: 100%;
+    }
+
+    .expense-item {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .expense-actions {
+        width: 100%;
     }
 
     .expense-actions button {
-        min-width: 60px;
-        padding: 8px;
+        flex: 1;
+    }
+
+    .form-actions button {
+        flex: 1;
     }
 }

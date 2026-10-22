@@ -2,114 +2,268 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Sets the character encoding so peso symbols display correctly. -->
     <meta charset="UTF-8">
+
+    <!-- Makes the layout adapt to the width of phones, tablets, and computers. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Sets the title shown in the browser tab. -->
     <title>Personal Expense Tracker</title>
+
+    <!-- Connects this HTML file to the separate CSS stylesheet. -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Loads the JavaScript after the HTML has been parsed. -->
+    <script src="script.js" defer></script>
 </head>
 <body>
+    <div class="app-container">
 
-    <div class="container">
-        <h1>Personal Expense Tracker</h1>
-        <p class="subtitle">Keep track of your daily expenses.</p>
+        <!-- Main heading of the expense tracker. -->
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">PERSONAL FINANCE</p>
+                <h1>Personal Expense Tracker</h1>
+                <p class="subtitle">Track your spending and manage your budget.</p>
+            </div>
+        </header>
 
-        <!-- MONTHLY BUDGET -->
-        <section class="budget-section">
-            <h2>Monthly Budget</h2>
-
-            <label for="budgetAmount">Set Your Budget (₱)</label>
-            <input type="number" id="budgetAmount"
-                   placeholder="e.g. 5000" min="0.01" step="0.01">
-
-            <button type="button" id="saveBudgetButton">Save Budget</button>
-
-            <div class="budget-summary">
-                <p>Monthly Budget: <strong id="budgetTotal">₱0.00</strong></p>
-                <p>Spent This Month: <strong id="monthlySpent">₱0.00</strong></p>
-                <p>Remaining Budget: <strong id="remainingBudget">₱0.00</strong></p>
+        <!-- DASHBOARD: Quick summaries of the user's expenses. -->
+        <section class="dashboard-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Expense Dashboard</h2>
+                    <p class="section-description">Your spending at a glance.</p>
+                </div>
             </div>
 
-            <div class="progress-track"
-                 role="progressbar"
-                 aria-label="Monthly budget used"
-                 aria-valuemin="0"
-                 aria-valuemax="100"
-                 aria-valuenow="0"
-                 id="budgetProgress">
+            <div class="summary-grid">
+
+                <!-- Displays the total value of every saved expense. -->
+                <article class="summary-card total-card">
+                    <p class="summary-label">All-Time Expenses</p>
+                    <p class="summary-value" id="total">₱0.00</p>
+                    <p class="summary-note">All saved expenses</p>
+                </article>
+
+                <!-- Displays spending for the current calendar month. -->
+                <article class="summary-card monthly-card">
+                    <p class="summary-label">Spent This Month</p>
+                    <p class="summary-value" id="monthlySpent">₱0.00</p>
+                    <p class="summary-note">Current calendar month</p>
+                </article>
+
+                <!-- Displays the difference between the budget and monthly spending. -->
+                <article class="summary-card remaining-card">
+                    <p class="summary-label">Budget Remaining</p>
+                    <p class="summary-value" id="remainingBudget">₱0.00</p>
+                    <p class="summary-note" id="budgetMessage">Set a monthly budget to begin.</p>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- MONTHLY BUDGET: Set a spending limit and monitor progress. -->
+        <section class="panel budget-panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Monthly Budget</h2>
+                    <p class="section-description">Set a limit for your current month's spending.</p>
+                </div>
+            </div>
+
+            <div class="budget-form">
+                <label for="budgetAmount">Budget amount (₱)</label>
+
+                <div class="budget-input-row">
+                    <input
+                        type="number"
+                        id="budgetAmount"
+                        min="0.01"
+                        step="0.01"
+                        placeholder="Enter your monthly budget"
+                    >
+
+                    <button type="button" id="saveBudgetButton">
+                        Save Budget
+                    </button>
+                </div>
+            </div>
+
+            <div class="budget-details">
+                <div class="budget-detail">
+                    <span>Monthly Budget</span>
+                    <strong id="budgetTotal">₱0.00</strong>
+                </div>
+
+                <div class="budget-detail">
+                    <span>Spent This Month</span>
+                    <strong id="budgetSpentCopy">₱0.00</strong>
+                </div>
+            </div>
+
+            <!-- The progress bar is updated whenever spending changes. -->
+            <div
+                class="progress-track"
+                id="budgetProgress"
+                role="progressbar"
+                aria-label="Monthly budget used"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+            >
                 <div class="progress-fill" id="budgetProgressFill"></div>
             </div>
 
-            <p id="budgetMessage" aria-live="polite">
-                Set a budget to track your monthly spending.
+            <p class="budget-status" id="budgetStatus">
+                Set a budget to track your spending progress.
             </p>
         </section>
 
-        <!-- ADD OR EDIT EXPENSE FORM -->
-        <section class="expense-form">
-            <h2 id="expenseFormTitle">Add an Expense</h2>
+        <!-- CATEGORY DASHBOARD: Summarizes current-month spending by category. -->
+        <section class="panel category-panel">
+            <div class="section-heading">
+                <div>
+                    <h2>This Month by Category</h2>
+                    <p class="section-description">
+                        See where your money is going this month.
+                    </p>
+                </div>
+            </div>
 
-            <label for="expenseName">Expense Name</label>
-            <input type="text" id="expenseName" placeholder="e.g. Lunch">
-
-            <label for="expenseAmount">Amount (₱)</label>
-            <input type="number" id="expenseAmount"
-                   placeholder="e.g. 150" min="0.01" step="0.01">
-
-            <label for="expenseCategory">Category</label>
-            <select id="expenseCategory">
-                <option value="Food">Food</option>
-                <option value="Transport">Transport</option>
-                <option value="School">School</option>
-                <option value="Other">Other</option>
-            </select>
-
-            <label for="expenseDate">Expense Date</label>
-            <input type="date" id="expenseDate">
-
-            <button type="button" id="addExpenseButton">Add Expense</button>
-
-            <!-- These controls appear only while editing an expense. -->
-            <button type="button" id="cancelEditButton"
-                    class="cancel-button" hidden>
-                Cancel Editing
-            </button>
+            <!-- JavaScript inserts the category totals and progress bars here. -->
+            <div id="categoryTotals" class="category-totals">
+                <p class="empty-message">Your category summary will appear here.</p>
+            </div>
         </section>
 
-        <!-- ALL-TIME TOTAL -->
-        <h2 class="all-time-total">
-            Total of All Expenses: <span id="total">₱0.00</span>
-        </h2>
+        <!-- EXPENSE FORM: Used for adding new expenses and editing existing ones. -->
+        <section class="panel form-panel">
+            <div class="section-heading">
+                <div>
+                    <h2 id="expenseFormTitle">Add an Expense</h2>
+                    <p class="section-description">Record the details of your spending.</p>
+                </div>
+            </div>
 
-        <!-- SEARCH AND CATEGORY FILTER -->
-        <section class="search-section">
-            <h2>Find Expenses</h2>
+            <form id="expenseForm">
+                <div class="form-grid">
 
-            <label for="searchExpense">Search by Expense Name</label>
-            <input type="search" id="searchExpense"
-                   placeholder="Type a name, e.g. lunch">
+                    <div class="form-group">
+                        <label for="expenseName">Expense Name</label>
+                        <input
+                            type="text"
+                            id="expenseName"
+                            placeholder="e.g. Lunch"
+                            maxlength="100"
+                            required
+                        >
+                    </div>
 
-            <label for="filterCategory">Filter by Category</label>
-            <select id="filterCategory">
-                <option value="All">All Categories</option>
-                <option value="Food">Food</option>
-                <option value="Transport">Transport</option>
-                <option value="School">School</option>
-                <option value="Other">Other</option>
-            </select>
+                    <div class="form-group">
+                        <label for="expenseAmount">Amount (₱)</label>
+                        <input
+                            type="number"
+                            id="expenseAmount"
+                            min="0.01"
+                            step="0.01"
+                            placeholder="e.g. 150"
+                            required
+                        >
+                    </div>
 
-            <p id="resultCount" aria-live="polite">Showing all expenses</p>
+                    <div class="form-group">
+                        <label for="expenseCategory">Category</label>
+                        <select id="expenseCategory" required>
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="School">School</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
 
-            <button type="button" id="resetFiltersButton"
-                    class="reset-button">
-                Reset Search and Filter
-            </button>
+                    <div class="form-group">
+                        <label for="expenseDate">Expense Date</label>
+                        <input type="date" id="expenseDate" required>
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="addExpenseButton">
+                        Add Expense
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancelEditButton"
+                        class="secondary-button"
+                        hidden
+                    >
+                        Cancel Edit
+                    </button>
+                </div>
+            </form>
         </section>
 
-        <!-- EXPENSE HISTORY -->
-        <h3>Expense History</h3>
-        <ul id="expenseList"></ul>
+        <!-- EXPENSE LIST: Search, filter, edit, and delete saved expenses. -->
+        <section class="panel expense-panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Your Expenses</h2>
+                    <p class="section-description">
+                        Review and manage your saved records.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Search and category filter work together. -->
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label for="searchExpense">Search by Name</label>
+                    <input
+                        type="search"
+                        id="searchExpense"
+                        placeholder="Search expenses..."
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="filterCategory">Filter by Category</label>
+                    <select id="filterCategory">
+                        <option value="All">All Categories</option>
+                        <option value="Food">Food</option>
+                        <option value="Transport">Transport</option>
+                        <option value="School">School</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="filter-button-wrapper">
+                    <button
+                        type="button"
+                        id="resetFiltersButton"
+                        class="secondary-button"
+                    >
+                        Reset Filters
+                    </button>
+                </div>
+            </div>
+
+            <p class="result-count" id="resultCount">0 expenses found</p>
+
+            <!-- JavaScript creates each expense row inside this container. -->
+            <div id="expenseList" class="expense-list">
+                <p class="empty-message">No expenses yet. Add your first expense above.</p>
+            </div>
+        </section>
+
+        <!-- Footer of the application. -->
+        <footer class="page-footer">
+            <p>Personal Expense Tracker | Manage your money wisely.</p>
+        </footer>
+
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>

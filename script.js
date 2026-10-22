@@ -1,37 +1,32 @@
 
-/*
-    PERSONAL EXPENSE TRACKER
-    Commit 4: Add expense editing
+// =========================================================
+// PERSONAL EXPENSE TRACKER
+// =========================================================
 
-    Features:
-    - Add and delete expenses
-    - Edit expense name, amount, category, and date
-    - Save expenses and monthly budget with localStorage
-    - Search expenses by name
-    - Filter expenses by category
-    - Calculate the all-time total
-    - Track the current month's budget
-*/
-
-// Load expenses and budget from localStorage.
+// Loads saved expenses from the browser's localStorage.
+// If no expenses have been saved yet, start with an empty array.
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+
+// Loads the saved monthly budget.
+// The value is converted into a number so calculations work correctly.
 let monthlyBudget = Number(localStorage.getItem("monthlyBudget")) || 0;
 
-// Store the index of the expense currently being edited.
-// null means the form is not currently editing an expense.
+// Stores the index of the expense currently being edited.
+// A value of null means the form is adding a new expense.
 let editingIndex = null;
 
 
-// --------------------------------------------------
-// HELPER FUNCTIONS
-// --------------------------------------------------
+// =========================================================
+// GET HTML ELEMENTS
+// =========================================================
 
-// Get an HTML element by its ID.
+// Finds an HTML element using its unique ID.
 function getElement(id) {
     return document.getElementById(id);
 }
 
-// Return today's local date in YYYY-MM-DD format.
+// Returns today's date in YYYY-MM-DD format using local time.
+// Using local time avoids date changes caused by UTC conversion.
 function getTodayDate() {
     const today = new Date();
     const year = today.getFullYear();
@@ -41,143 +36,267 @@ function getTodayDate() {
     return `${year}-${month}-${day}`;
 }
 
-// Format a number as Philippine pesos.
+// Formats a number as Philippine pesos with two decimal places.
 function formatPeso(amount) {
-    return Number(amount).toLocaleString("en-PH", {
+    return new Intl.NumberFormat("en-PH", {
         style: "currency",
-        currency: "PHP"
-    });
+        currency: "PHP",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(amount);
 }
 
-// Save the expenses without overwriting the budget.
+// Saves the current expense array to the browser.
+// The data remains available after the page is refreshed.
 function saveExpenses() {
     localStorage.setItem("expenses", JSON.stringify(expenses));
 }
 
 
-// --------------------------------------------------
-// MONTHLY BUDGET FUNCTIONS
-// --------------------------------------------------
+// =========================================================
+// MONTH AND DATE HELPERS
+// =========================================================
 
-// Save the monthly budget.
+// Checks whether an expense belongs to the current calendar month.
+// An expense without a valid date is not counted in monthly spending.
+function isCurrentMonth(expense) {
+    if (!expense.date) {
+        return false;
+    }
+
+    const expenseDate = new Date(`${expense.date}T12:00:00`);
+    const today = new Date();
+
+    return (
+        !Number.isNaN(expenseDate.getTime()) &&
+        expenseDate.getFullYear() === today.getFullYear() &&
+        expenseDate.getMonth() === today.getMonth()
+    );
+}
+
+// Adds the amounts of expenses recorded during the current month.
+function calculateMonthlySpending() {
+    return expenses.reduce((sum, expense) => {
+        if (isCurrentMonth(expense)) {
+            return sum + Number(expense.amount);
+        }
+
+        return sum;
+    }, 0);
+}
+
+
+// =========================================================
+// MONTHLY BUDGET
+// =========================================================
+
+// Saves the user's monthly budget after checking the entered value.
 function saveBudget() {
     const budgetInput = getElement("budgetAmount");
-    const budgetText = budgetInput.value.trim();
-    const newBudget = Number(budgetText);
+    const enteredBudget = Number(budgetInput.value);
 
+    // Do not accept an empty, zero, negative, or invalid budget.
     if (
-        budgetText === "" ||
-        !Number.isFinite(newBudget) ||
-        newBudget <= 0
+        budgetInput.value.trim() === "" ||
+        !Number.isFinite(enteredBudget) ||
+        enteredBudget <= 0
     ) {
-        alert("Please enter a budget greater than zero.");
+        alert("Please enter a valid budget greater than zero.");
         budgetInput.focus();
         return;
     }
 
-    monthlyBudget = newBudget;
+    // Update the budget and save it for future visits.
+    monthlyBudget = enteredBudget;
     localStorage.setItem("monthlyBudget", String(monthlyBudget));
 
+    // Refresh the dashboard and budget progress display.
     displayBudget();
-
-    alert("Your monthly budget has been saved.");
+    displayCategoryTotals();
 }
 
-// Check whether an expense date belongs to this month.
-function isCurrentMonth(dateString) {
-    if (!dateString) {
-        return false;
-    }
-
-    return dateString.slice(0, 7) === getTodayDate().slice(0, 7);
-}
-
-// Calculate spending for the current month.
-function calculateMonthlySpending() {
-    return expenses.reduce(function(total, expense) {
-        if (isCurrentMonth(expense.date)) {
-            return total + (Number(expense.amount) || 0);
-        }
-
-        return total;
-    }, 0);
-}
-
-// Display budget totals, remaining balance, progress, and warnings.
+// Updates all budget information shown on the page.
 function displayBudget() {
-    const spent = calculateMonthlySpending();
-    const remaining = monthlyBudget - spent;
+    const monthlySpending = calculateMonthlySpending();
+    const remaining = monthlyBudget - monthlySpending;
 
-    const percentage = monthlyBudget > 0
-        ? (spent / monthlyBudget) * 100
-        : 0;
-
-    const progress = getElement("budgetProgress");
-    const progressFill = getElement("budgetProgressFill");
-    const message = getElement("budgetMessage");
-
+    // Show the current budget and spending.
     getElement("budgetTotal").textContent = formatPeso(monthlyBudget);
-    getElement("monthlySpent").textContent = formatPeso(spent);
+    getElement("budgetSpentCopy").textContent = formatPeso(monthlySpending);
+    getElement("monthlySpent").textContent = formatPeso(monthlySpending);
+
+    // Show the amount left, or the amount over budget.
     getElement("remainingBudget").textContent = formatPeso(remaining);
 
-    const displayedPercentage = Math.min(100, Math.max(0, percentage));
-    progressFill.style.width = `${displayedPercentage}%`;
+    // Change the card appearance if the spending exceeds the budget.
+    const remainingCard = document.querySelector(".remaining-card");
+    remainingCard.classList.toggle("over-budget", monthlyBudget > 0 && remaining < 0);
 
-    progress.setAttribute(
-        "aria-valuenow",
-        String(Math.round(displayedPercentage))
-    );
+    // Calculate how much of the budget has been used.
+    let percentageUsed = 0;
 
-    // Remove status colors left by the previous display.
-    message.classList.remove("warning", "over-budget");
-    progressFill.classList.remove("warning", "over-budget");
-
-    if (monthlyBudget <= 0) {
-        message.textContent =
-            "Set a budget to track your monthly spending.";
-    } else if (spent > monthlyBudget) {
-        message.textContent =
-            `You are over budget by ${formatPeso(spent - monthlyBudget)}.`;
-
-        message.classList.add("over-budget");
-        progressFill.classList.add("over-budget");
-    } else if (spent === monthlyBudget) {
-        message.textContent =
-            "You have used your entire monthly budget.";
-
-        message.classList.add("warning");
-        progressFill.classList.add("warning");
-    } else if (percentage >= 80) {
-        message.textContent =
-            `Warning: You have used ${percentage.toFixed(1)}% of your budget.`;
-
-        message.classList.add("warning");
-        progressFill.classList.add("warning");
-    } else {
-        message.textContent =
-            `You have ${formatPeso(remaining)} left for this month.`;
+    if (monthlyBudget > 0) {
+        percentageUsed = (monthlySpending / monthlyBudget) * 100;
     }
 
-    // Restore the saved budget in its input field.
-    getElement("budgetAmount").value =
-        monthlyBudget > 0 ? monthlyBudget : "";
+    // The bar cannot visually extend beyond 100%.
+    const visiblePercentage = Math.min(percentageUsed, 100);
+
+    getElement("budgetProgressFill").style.width =
+        `${Math.max(visiblePercentage, 0)}%`;
+
+    // Update the bar color according to the spending level.
+    const progressFill = getElement("budgetProgressFill");
+
+    if (monthlyBudget > 0 && monthlySpending > monthlyBudget) {
+        progressFill.style.backgroundColor = "firebrick";
+    } else if (monthlyBudget > 0 && percentageUsed >= 80) {
+        progressFill.style.backgroundColor = "darkorange";
+    } else {
+        progressFill.style.backgroundColor = "mediumseagreen";
+    }
+
+    // Update the accessible progress-bar value.
+    const progressBar = getElement("budgetProgress");
+    progressBar.setAttribute(
+        "aria-valuenow",
+        String(Math.round(visiblePercentage))
+    );
+
+    // Display a message that explains the current budget status.
+    const budgetMessage = getElement("budgetMessage");
+    const budgetStatus = getElement("budgetStatus");
+
+    if (monthlyBudget <= 0) {
+        budgetMessage.textContent = "Set a monthly budget to begin.";
+        budgetStatus.textContent =
+            "Set a budget to track your spending progress.";
+    } else if (remaining < 0) {
+        budgetMessage.textContent = "You are over budget.";
+        budgetStatus.textContent =
+            `You exceeded your budget by ${formatPeso(Math.abs(remaining))}.`;
+    } else if (remaining === 0) {
+        budgetMessage.textContent = "Your budget is fully used.";
+        budgetStatus.textContent = "You have used 100% of your monthly budget.";
+    } else if (percentageUsed >= 80) {
+        budgetMessage.textContent = "Your budget is almost used.";
+        budgetStatus.textContent =
+            `${percentageUsed.toFixed(1)}% of your budget has been used.`;
+    } else {
+        budgetMessage.textContent = "You are within budget.";
+        budgetStatus.textContent =
+            `${percentageUsed.toFixed(1)}% of your budget has been used.`;
+    }
 }
 
 
-// --------------------------------------------------
-// ADD OR UPDATE EXPENSE
-// --------------------------------------------------
+// =========================================================
+// MONTHLY CATEGORY DASHBOARD
+// =========================================================
 
-// This function adds a new expense or updates an existing one.
-function addExpense() {
+// Calculates current-month spending for each available category.
+// These totals are independent of the search and category filters.
+function displayCategoryTotals() {
+    const categoryContainer = getElement("categoryTotals");
+
+    const categories = ["Food", "Transport", "School", "Other"];
+
+    // Start each category at zero.
+    const categoryAmounts = {
+        Food: 0,
+        Transport: 0,
+        School: 0,
+        Other: 0
+    };
+
+    // Only include expenses recorded during the current month.
+    expenses.forEach((expense) => {
+        if (isCurrentMonth(expense) && categories.includes(expense.category)) {
+            categoryAmounts[expense.category] += Number(expense.amount);
+        }
+    });
+
+    // Find the highest category total to scale the progress bars.
+    const highestAmount = Math.max(
+        ...categories.map((category) => categoryAmounts[category]),
+        0
+    );
+
+    // Clear the previous category rows before creating updated ones.
+    categoryContainer.replaceChildren();
+
+    // Create one row for every category.
+    categories.forEach((category) => {
+        const amount = categoryAmounts[category];
+
+        // Calculate the category bar's width relative to the highest category.
+        // If every category is zero, keep all bars at zero percent.
+        const percentage = highestAmount > 0
+            ? (amount / highestAmount) * 100
+            : 0;
+
+        const row = document.createElement("div");
+        row.className = "category-row";
+
+        const heading = document.createElement("div");
+        heading.className = "category-heading";
+
+        const name = document.createElement("span");
+        name.className = "category-name";
+        name.textContent = category;
+
+        const amountLabel = document.createElement("span");
+        amountLabel.className = "category-amount";
+        amountLabel.textContent = formatPeso(amount);
+
+        heading.append(name, amountLabel);
+
+        const track = document.createElement("div");
+        track.className = "category-progress-track";
+        track.setAttribute("role", "progressbar");
+        track.setAttribute("aria-label", `${category} spending`);
+        track.setAttribute("aria-valuemin", "0");
+        track.setAttribute("aria-valuemax", "100");
+        track.setAttribute("aria-valuenow", String(Math.round(percentage)));
+
+        const fill = document.createElement("div");
+        fill.className = "category-progress-fill";
+        fill.style.width = `${percentage}%`;
+
+        track.appendChild(fill);
+        row.append(heading, track);
+        categoryContainer.appendChild(row);
+    });
+
+    // Display an explanation when there are no expenses this month.
+    const monthlySpending = calculateMonthlySpending();
+
+    if (monthlySpending === 0) {
+        const message = document.createElement("p");
+        message.className = "category-empty";
+        message.textContent =
+            "No spending recorded this month. Add an expense to see your category totals.";
+        categoryContainer.appendChild(message);
+    }
+}
+
+
+// =========================================================
+// ADDING AND EDITING EXPENSES
+// =========================================================
+
+// Handles both new expenses and updates to existing expenses.
+function addExpense(event) {
+    // Prevent the browser from reloading the page after form submission.
+    event.preventDefault();
+
     const nameInput = getElement("expenseName");
     const amountInput = getElement("expenseAmount");
     const categoryInput = getElement("expenseCategory");
     const dateInput = getElement("expenseDate");
 
     const name = nameInput.value.trim();
-    const amountText = amountInput.value.trim();
-    const amount = Number(amountText);
+    const amount = Number(amountInput.value);
     const category = categoryInput.value;
     const date = dateInput.value;
 
@@ -190,7 +309,7 @@ function addExpense() {
 
     // Validate the amount.
     if (
-        amountText === "" ||
+        amountInput.value.trim() === "" ||
         !Number.isFinite(amount) ||
         amount <= 0
     ) {
@@ -199,15 +318,19 @@ function addExpense() {
         return;
     }
 
-    // Validate the date.
-    if (date === "") {
-        alert("Please select the expense date.");
+    // Validate the date and prevent dates later than today.
+    if (
+        date === "" ||
+        Number.isNaN(new Date(`${date}T12:00:00`).getTime()) ||
+        date > getTodayDate()
+    ) {
+        alert("Please enter a valid expense date that is not in the future.");
         dateInput.focus();
         return;
     }
 
-    // Create the updated expense data.
-    const expense = {
+    // Keep the expense information in one object.
+    const expenseData = {
         name: name,
         amount: amount,
         category: category,
@@ -215,106 +338,89 @@ function addExpense() {
     };
 
     if (editingIndex !== null) {
-        // EDIT MODE:
-        // Replace the existing expense at its original position.
-        expenses[editingIndex] = expense;
+        // Replace the selected expense rather than creating a duplicate.
+        expenses[editingIndex] = expenseData;
     } else {
-        // ADD MODE:
         // Add a new expense to the array.
-        expenses.push(expense);
+        expenses.push(expenseData);
     }
 
-    // Save the changes.
+    // Save the updated expenses.
     saveExpenses();
 
-    // Exit edit mode and clear the form.
+    // Return the form to its normal Add Expense state.
     cancelEditing();
 
-    // Refresh the list, totals, and budget.
-    displayExpenses();
-    displayBudget();
+    // Refresh the expense list and all dashboard totals.
+    refreshDisplay();
 }
 
-
-// --------------------------------------------------
-// EDIT EXPENSE
-// --------------------------------------------------
-
-// Put the selected expense's information into the form.
+// Loads an expense into the form so the user can edit it.
 function editExpense(index) {
-    // Make sure the selected expense exists.
-    if (index < 0 || index >= expenses.length) {
+    const expense = expenses[index];
+
+    // Stop if the selected expense no longer exists.
+    if (!expense) {
         return;
     }
 
-    const expense = expenses[index];
-
-    // Remember which expense is being edited.
     editingIndex = index;
 
-    // Fill the form with the existing information.
     getElement("expenseName").value = expense.name;
     getElement("expenseAmount").value = expense.amount;
     getElement("expenseCategory").value = expense.category;
+
+    // Use today's date if an older saved record has no date.
     getElement("expenseDate").value = expense.date || getTodayDate();
 
-    // Change the form heading and main button.
+    // Change the form heading and button text to indicate editing.
     getElement("expenseFormTitle").textContent = "Edit Expense";
     getElement("addExpenseButton").textContent = "Save Changes";
-
-    // Show the cancel button while editing.
     getElement("cancelEditButton").hidden = false;
 
-    // Move the user to the form.
-    getElement("expenseName").focus();
-    getElement("expenseFormTitle").scrollIntoView({
+    // Bring the form into view and focus the expense name.
+    getElement("expenseForm").scrollIntoView({
         behavior: "smooth",
         block: "center"
     });
+
+    getElement("expenseName").focus();
 }
 
-// Cancel editing and return the form to add mode.
+// Cancels editing and restores the normal add-expense form.
 function cancelEditing() {
     editingIndex = null;
 
-    // Clear the form fields.
-    getElement("expenseName").value = "";
-    getElement("expenseAmount").value = "";
-    getElement("expenseCategory").value = "Food";
+    getElement("expenseForm").reset();
     getElement("expenseDate").value = getTodayDate();
 
-    // Restore the original form heading and button text.
     getElement("expenseFormTitle").textContent = "Add an Expense";
     getElement("addExpenseButton").textContent = "Add Expense";
-
-    // Hide the cancel button because edit mode has ended.
     getElement("cancelEditButton").hidden = true;
 }
 
 
-// --------------------------------------------------
+// =========================================================
 // SEARCH AND CATEGORY FILTERS
-// --------------------------------------------------
+// =========================================================
 
-// Return the expenses that match the search and category.
+// Returns expenses that match both the search text and selected category.
+// Each expense keeps its original array index so Edit and Delete target
+// the correct record even when the list is filtered.
 function getFilteredExpenses() {
-    const searchText = getElement("searchExpense")
-        .value.trim().toLowerCase();
+    const searchText = getElement("searchExpense").value
+        .trim()
+        .toLowerCase();
 
     const selectedCategory = getElement("filterCategory").value;
 
-    // Keep each expense's original index for editing and deleting.
     return expenses
-        .map(function(expense, index) {
-            return {
-                expense: expense,
-                originalIndex: index
-            };
-        })
-        .filter(function(entry) {
-            const expense = entry.expense;
-
-            const matchesSearch = expense.name
+        .map((expense, index) => ({
+            expense: expense,
+            index: index
+        }))
+        .filter(({ expense }) => {
+            const matchesName = expense.name
                 .toLowerCase()
                 .includes(searchText);
 
@@ -322,11 +428,11 @@ function getFilteredExpenses() {
                 selectedCategory === "All" ||
                 expense.category === selectedCategory;
 
-            return matchesSearch && matchesCategory;
+            return matchesName && matchesCategory;
         });
 }
 
-// Reset search and category filters.
+// Clears the search box and restores all categories.
 function resetFilters() {
     getElement("searchExpense").value = "";
     getElement("filterCategory").value = "All";
@@ -335,174 +441,175 @@ function resetFilters() {
 }
 
 
-// --------------------------------------------------
-// DISPLAY EXPENSES
-// --------------------------------------------------
+// =========================================================
+// DISPLAYING EXPENSES
+// =========================================================
 
-// Display the filtered list while keeping totals based on all expenses.
+// Builds and displays the expense list using the current filters.
 function displayExpenses() {
-    const list = getElement("expenseList");
-    const total = getElement("total");
+    const expenseList = getElement("expenseList");
     const resultCount = getElement("resultCount");
 
-    list.innerHTML = "";
-
-    // Calculate the all-time total from every saved expense.
-    const totalAmount = expenses.reduce(function(sum, expense) {
-        return sum + (Number(expense.amount) || 0);
-    }, 0);
-
-    total.textContent = formatPeso(totalAmount);
-
-    // Apply the current search and category filter.
     const filteredExpenses = getFilteredExpenses();
 
-    // Display the number of matching expenses.
-    if (
-        getElement("searchExpense").value.trim() === "" &&
-        getElement("filterCategory").value === "All"
-    ) {
-        resultCount.textContent =
-            `Showing all ${expenses.length} expense(s).`;
-    } else {
-        resultCount.textContent =
-            `Found ${filteredExpenses.length} matching expense(s).`;
-    }
+    // Remove old rows before displaying the latest results.
+    expenseList.replaceChildren();
 
-    // Display a message when no expense matches.
+    // Update the result count shown above the list.
+    resultCount.textContent =
+        `${filteredExpenses.length} expense${filteredExpenses.length === 1 ? "" : "s"} found`;
+
+    // Show a message if no expenses match the filters.
     if (filteredExpenses.length === 0) {
-        const emptyItem = document.createElement("li");
-        emptyItem.className = "empty-message";
+        const message = document.createElement("p");
+        message.className = "empty-message";
 
-        emptyItem.textContent = expenses.length === 0
-            ? "No expenses yet. Add your first expense above."
-            : "No expenses match your search or selected category.";
+        if (expenses.length === 0) {
+            message.textContent =
+                "No expenses yet. Add your first expense above.";
+        } else {
+            message.textContent =
+                "No matching expenses found. Try changing your search or filter.";
+        }
 
-        list.appendChild(emptyItem);
+        expenseList.appendChild(message);
         return;
     }
 
-    // Create one entry for each matching expense.
-    filteredExpenses.forEach(function(entry) {
-        const expense = entry.expense;
-        const originalIndex = entry.originalIndex;
+    // Create one visual item for every matching expense.
+    filteredExpenses.forEach(({ expense, index }) => {
+        const item = document.createElement("article");
+        item.className = "expense-item";
 
-        const item = document.createElement("li");
+        const information = document.createElement("div");
+        information.className = "expense-information";
 
-        // Create the details area.
-        const details = document.createElement("div");
-        details.className = "expense-details";
+        const title = document.createElement("h3");
 
-        const expenseName = document.createElement("strong");
-        expenseName.textContent = expense.name;
+        // textContent displays user-entered text as text, not executable HTML.
+        title.textContent = expense.name;
 
-        const expenseInfo = document.createElement("span");
-        expenseInfo.className = "expense-info";
-        expenseInfo.textContent =
-            `${expense.category} | ${expense.date || "Date not recorded"}`;
+        const category = document.createElement("p");
+        category.textContent = `Category: ${expense.category}`;
 
-        const expenseAmount = document.createElement("span");
-        expenseAmount.className = "expense-amount";
-        expenseAmount.textContent = formatPeso(expense.amount);
+        const date = document.createElement("p");
+        date.textContent = `Date: ${expense.date || "Not recorded"}`;
 
-        details.appendChild(expenseName);
-        details.appendChild(expenseInfo);
-        details.appendChild(expenseAmount);
+        const amount = document.createElement("p");
+        amount.className = "expense-amount";
+        amount.textContent = formatPeso(Number(expense.amount));
 
-        // Group the Edit and Delete buttons together.
+        information.append(title, category, date, amount);
+
         const actions = document.createElement("div");
         actions.className = "expense-actions";
 
-        // Create the Edit button.
+        // The Edit button uses the original index from the full expense array.
         const editButton = document.createElement("button");
         editButton.type = "button";
         editButton.className = "edit-button";
         editButton.textContent = "Edit";
+        editButton.setAttribute("aria-label", `Edit ${expense.name}`);
+        editButton.addEventListener("click", () => editExpense(index));
 
-        editButton.addEventListener("click", function() {
-            editExpense(originalIndex);
-        });
-
-        // Create the Delete button.
+        // The Delete button also targets the original array index.
         const deleteButton = document.createElement("button");
         deleteButton.type = "button";
         deleteButton.className = "delete-button";
         deleteButton.textContent = "Delete";
+        deleteButton.setAttribute("aria-label", `Delete ${expense.name}`);
+        deleteButton.addEventListener("click", () => deleteExpense(index));
 
-        deleteButton.addEventListener("click", function() {
-            deleteExpense(originalIndex);
-        });
-
-        // Add both buttons to the action area.
-        actions.appendChild(editButton);
-        actions.appendChild(deleteButton);
-
-        // Add the details and buttons to the expense entry.
-        item.appendChild(details);
-        item.appendChild(actions);
-        list.appendChild(item);
+        actions.append(editButton, deleteButton);
+        item.append(information, actions);
+        expenseList.appendChild(item);
     });
 }
 
 
-// --------------------------------------------------
-// DELETE EXPENSE
-// --------------------------------------------------
+// =========================================================
+// DELETING EXPENSES
+// =========================================================
 
+// Removes an expense after the user confirms the action.
 function deleteExpense(index) {
-    if (index < 0 || index >= expenses.length) {
+    const expense = expenses[index];
+
+    if (!expense) {
         return;
     }
 
-    // If the expense being edited is deleted, exit edit mode.
+    const confirmed = confirm(
+        `Are you sure you want to delete "${expense.name}"?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    // If the expense being edited is deleted, exit editing mode.
     if (editingIndex === index) {
         cancelEditing();
     } else if (editingIndex !== null && index < editingIndex) {
-        // Keep the correct editing index if an earlier item is removed.
-        editingIndex--;
+        // Keep the edit index correct if an earlier expense is removed.
+        editingIndex -= 1;
     }
 
-    // Remove the expense from the array.
+    // Remove the selected item from the expense array.
     expenses.splice(index, 1);
 
+    // Save and refresh the list, budget, and category totals.
     saveExpenses();
-
-    // Refresh the list and budget.
-    displayExpenses();
-    displayBudget();
+    refreshDisplay();
 }
 
 
-// --------------------------------------------------
-// CONNECT BUTTONS AND INPUTS
-// --------------------------------------------------
+// =========================================================
+// REFRESH ALL DISPLAYED INFORMATION
+// =========================================================
 
-// Save the monthly budget.
+// Keeps the expense list and all dashboard figures synchronized.
+function refreshDisplay() {
+    displayExpenses();
+    displayBudget();
+    displayCategoryTotals();
+}
+
+
+// =========================================================
+// EVENT LISTENERS
+// =========================================================
+
+// Submitting the form adds a new expense or saves an edit.
+getElement("expenseForm").addEventListener("submit", addExpense);
+
+// Clicking the budget button saves the monthly budget.
 getElement("saveBudgetButton").addEventListener("click", saveBudget);
 
-// Add a new expense or save an edited expense.
-getElement("addExpenseButton").addEventListener("click", addExpense);
-
-// Cancel the current edit.
+// Clicking Cancel Edit restores the empty form.
 getElement("cancelEditButton").addEventListener("click", cancelEditing);
 
-// Update the list while typing a search.
+// Refresh the expense list whenever the search text changes.
 getElement("searchExpense").addEventListener("input", displayExpenses);
 
-// Update the list when a category is selected.
+// Refresh the expense list whenever the category filter changes.
 getElement("filterCategory").addEventListener("change", displayExpenses);
 
-// Reset search and category filters.
+// Restore all expense records when Reset Filters is clicked.
 getElement("resetFiltersButton").addEventListener("click", resetFilters);
 
 
-// --------------------------------------------------
+// =========================================================
 // INITIAL PAGE SETUP
-// --------------------------------------------------
+// =========================================================
 
-// Set the default expense date to today.
+// Set today's date as the default for a new expense.
 getElement("expenseDate").value = getTodayDate();
 
-// Load the saved expense history and budget.
-displayExpenses();
-displayBudget();
+// Restore the saved budget in the input field.
+if (monthlyBudget > 0) {
+    getElement("budgetAmount").value = String(monthlyBudget);
+}
+
+// Display saved expenses and calculate the dashboard on page load.
+refreshDisplay();
