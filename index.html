@@ -13,7 +13,7 @@
         <h1>Personal Expense Tracker</h1>
         <p class="subtitle">Keep track of your daily expenses.</p>
 
-        <!-- MONTHLY BUDGET SECTION -->
+        <!-- MONTHLY BUDGET -->
         <section class="budget-section">
             <h2>Monthly Budget</h2>
 
@@ -44,9 +44,9 @@
             </p>
         </section>
 
-        <!-- ADD EXPENSE SECTION -->
+        <!-- ADD OR EDIT EXPENSE FORM -->
         <section class="expense-form">
-            <h2>Add an Expense</h2>
+            <h2 id="expenseFormTitle">Add an Expense</h2>
 
             <label for="expenseName">Expense Name</label>
             <input type="text" id="expenseName" placeholder="e.g. Lunch">
@@ -67,14 +67,20 @@
             <input type="date" id="expenseDate">
 
             <button type="button" id="addExpenseButton">Add Expense</button>
+
+            <!-- These controls appear only while editing an expense. -->
+            <button type="button" id="cancelEditButton"
+                    class="cancel-button" hidden>
+                Cancel Editing
+            </button>
         </section>
 
-        <!-- TOTAL OF ALL RECORDED EXPENSES -->
+        <!-- ALL-TIME TOTAL -->
         <h2 class="all-time-total">
             Total of All Expenses: <span id="total">₱0.00</span>
         </h2>
 
-        <!-- SEARCH AND FILTER SECTION -->
+        <!-- SEARCH AND CATEGORY FILTER -->
         <section class="search-section">
             <h2>Find Expenses</h2>
 
@@ -92,11 +98,14 @@
             </select>
 
             <p id="resultCount" aria-live="polite">Showing all expenses</p>
+
             <button type="button" id="resetFiltersButton"
-                    class="reset-button">Reset Search and Filter</button>
+                    class="reset-button">
+                Reset Search and Filter
+            </button>
         </section>
 
-        <!-- FILTERED EXPENSE HISTORY -->
+        <!-- EXPENSE HISTORY -->
         <h3>Expense History</h3>
         <ul id="expenseList"></ul>
     </div>

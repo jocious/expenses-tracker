@@ -18,7 +18,7 @@ body {
     box-shadow: 0 4px 12px gray;
 }
 
-/* MAIN HEADING */
+/* HEADINGS */
 h1 {
     text-align: center;
     margin-bottom: 8px;
@@ -74,7 +74,7 @@ select {
     font-size: 15px;
 }
 
-/* GENERAL BUTTON DESIGN */
+/* GENERAL BUTTONS */
 button {
     width: 100%;
     padding: 11px;
@@ -89,6 +89,20 @@ button {
 
 button:hover {
     background: darkgreen;
+}
+
+/* CANCEL EDITING BUTTON */
+.cancel-button {
+    background: dimgray;
+}
+
+.cancel-button:hover {
+    background: black;
+}
+
+/* HIDE ELEMENTS THAT ARE MARKED HIDDEN */
+[hidden] {
+    display: none !important;
 }
 
 /* BUDGET SUMMARY */
@@ -160,14 +174,13 @@ button:hover {
     overflow-wrap: anywhere;
 }
 
-/* SEARCH RESULT COUNT */
+/* SEARCH RESULTS */
 #resultCount {
     color: dimgray;
     font-size: 14px;
     margin-bottom: 0;
 }
 
-/* RESET SEARCH BUTTON */
 .reset-button {
     background: dimgray;
 }
@@ -217,22 +230,44 @@ h3 {
     color: darkgreen;
 }
 
-/* DELETE BUTTON */
-.delete-button {
-    width: auto;
+/* EDIT AND DELETE BUTTON GROUP */
+.expense-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     flex-shrink: 0;
+}
+
+/* SMALL BUTTONS INSIDE EACH EXPENSE */
+.expense-actions button {
+    width: auto;
+    min-width: 68px;
     margin: 0;
     padding: 8px 10px;
-    background: red;
     font-size: 13px;
+}
+
+/* EDIT BUTTON */
+.edit-button {
+    background: royalblue;
+}
+
+.edit-button:hover {
+    background: darkblue;
+}
+
+/* DELETE BUTTON */
+.delete-button {
+    background: red;
 }
 
 .delete-button:hover {
     background: darkred;
 }
 
-/* MESSAGE WHEN NO EXPENSES MATCH */
+/* EMPTY SEARCH RESULTS MESSAGE */
 .empty-message {
+    display: block !important;
     color: dimgray;
     text-align: center;
     padding: 18px;
@@ -256,5 +291,10 @@ h3 {
 
     #expenseList li {
         align-items: flex-start;
+    }
+
+    .expense-actions button {
+        min-width: 60px;
+        padding: 8px;
     }
 }
